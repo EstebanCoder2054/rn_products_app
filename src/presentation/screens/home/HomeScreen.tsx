@@ -1,11 +1,13 @@
-import { View, Text } from 'react-native';
 import React from 'react';
+import { Button, Icon, Layout, Text } from '@ui-kitten/components';
 
 const HomeScreen = () => {
   return (
-    <View>
+    // same as View Component, it's a wrapper
+    <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>HomeScreen</Text>
-    </View>
+      <Button accessoryLeft={<Icon name="facebook" />}>Cerrar sesión</Button>
+    </Layout>
   );
 };
 
