@@ -1,10 +1,12 @@
 import React from 'react';
 import { Button, Icon, Layout, Text } from '@ui-kitten/components';
 import { useAuthStore } from '../../store/auth/useAuthStore';
+import { getProductsByPage } from '../../../actions/products/get-products-by-page';
 
 const HomeScreen = () => {
   const { logout } = useAuthStore();
-  // const logout = useAuthStore(state => state.logout);
+
+  getProductsByPage(0);
 
   return (
     // same as View Component, it's a wrapper
