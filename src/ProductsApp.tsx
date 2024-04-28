@@ -7,6 +7,9 @@ import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { useColorScheme } from 'react-native';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import AuthProvider from './presentation/providers/AuthProvider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 const ProductsApp = () => {
   const colorScheme = useColorScheme();
@@ -17,7 +20,7 @@ const ProductsApp = () => {
       : theme['color-basic-100'];
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={theme}>
         <NavigationContainer
@@ -37,7 +40,7 @@ const ProductsApp = () => {
           </AuthProvider>
         </NavigationContainer>
       </ApplicationProvider>
-    </>
+    </QueryClientProvider>
   );
 };
 
