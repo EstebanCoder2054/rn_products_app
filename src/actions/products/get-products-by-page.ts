@@ -1,6 +1,6 @@
 import { tesloApi } from '../../config/api/tesloApi';
 import type { Product } from '../../domain/entities/product';
-import { TesloProduct } from '../../infrastructure/interfaces/teslo-products.response';
+import type { TesloProduct } from '../../infrastructure/interfaces/teslo-products.response';
 import { ProductMapper } from '../../infrastructure/mappers/product.mapper';
 
 export const getProductsByPage = async (
