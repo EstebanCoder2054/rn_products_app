@@ -13,7 +13,7 @@ import { getProductById } from '../../../actions/products/get-product-by-id';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParams } from '../../navigation/StackNavigator';
 import { ScrollView } from 'react-native-gesture-handler';
-import { FlatList, KeyboardAvoidingView } from 'react-native';
+import { FlatList, Image, KeyboardAvoidingView } from 'react-native';
 import { FadeInImage } from '../../components/ui/FadeInImage';
 import { Gender, Size, Product } from '../../../domain/entities/product';
 import { MyIcon } from '../../components/ui/MyIcon';
@@ -65,19 +65,31 @@ const ProductScreen = ({ route }: Props) => {
           subTitle={`Precio: ${values?.price}$`}>
           <KeyboardAvoidingView style={{ flex: 1 }}>
             <ScrollView style={{ flex: 1 }}>
-              <Layout>
-                <FlatList
-                  data={values?.images}
-                  horizontal
-                  keyExtractor={item => item}
-                  showsHorizontalScrollIndicator={false}
-                  renderItem={({ item }) => (
-                    <FadeInImage
-                      uri={item}
-                      style={{ width: 300, height: 300, marginHorizontal: 7 }}
-                    />
-                  )}
-                />
+              <Layout
+                style={{
+                  marginVertical: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                {values.images.length === 0 ? (
+                  <Image
+                    source={require('../../../assets/no-product-image.png')}
+                    style={{ width: 300, height: 300, marginHorizontal: 7 }}
+                  />
+                ) : (
+                  <FlatList
+                    data={values?.images}
+                    horizontal
+                    keyExtractor={item => item}
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({ item }) => (
+                      <FadeInImage
+                        uri={item}
+                        style={{ width: 300, height: 300, marginHorizontal: 7 }}
+                      />
+                    )}
+                  />
+                )}
               </Layout>
 
               <Layout style={{ marginHorizontal: 10 }}>
@@ -180,9 +192,6 @@ const ProductScreen = ({ route }: Props) => {
                 style={{ margin: 15 }}>
                 Guardar
               </Button>
-
-              <Text>{JSON.stringify(values, null, 3)}</Text>
-
               <Layout style={{ height: 200 }} />
             </ScrollView>
           </KeyboardAvoidingView>
