@@ -8,16 +8,17 @@ import {
   Text,
   useTheme,
 } from '@ui-kitten/components';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getProductById } from '../../../actions/products/get-product-by-id';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParams } from '../../navigation/StackNavigator';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FlatList, KeyboardAvoidingView } from 'react-native';
 import { FadeInImage } from '../../components/ui/FadeInImage';
-import { Gender, Size } from '../../../domain/entities/product';
+import { Gender, Size, Product } from '../../../domain/entities/product';
 import { MyIcon } from '../../components/ui/MyIcon';
 import { Formik } from 'formik';
+import { updateCreateProduct } from '../../../actions/products/update-create-product';
 
 const sizes: Size[] = [Size.Xs, Size.S, Size.M, Size.L, Size.Xl, Size.Xxl];
 const genders: Gender[] = [Gender.Kid, Gender.Men, Gender.Women, Gender.Unisex];
@@ -27,6 +28,7 @@ interface Props extends StackScreenProps<RootStackParams, 'ProductScreen'> {}
 const ProductScreen = ({ route }: Props) => {
   const productIdRef = useRef(route.params.productId);
   const theme = useTheme();
+  const queryClient = useQueryClient();
 
   const { isLoading, data: product } = useQuery({
     queryKey: ['product', productIdRef.current],
@@ -34,12 +36,29 @@ const ProductScreen = ({ route }: Props) => {
     queryFn: () => getProductById(productIdRef.current),
   });
 
+  const mutation = useMutation({
+    mutationFn: (data: Product) =>
+      updateCreateProduct({ ...data, id: productIdRef.current }),
+    onSuccess(data: Product) {
+      productIdRef.current = data.id;
+
+      //Para que el caché se reinicie al hacer la mutación y no esperar el time stale
+      queryClient.invalidateQueries({ queryKey: ['products', 'infinite'] });
+      queryClient.invalidateQueries({ queryKey: ['product', data.id] });
+
+      console.log('SUCCESS');
+      console.log({ data });
+    },
+  });
+
   if (isLoading) {
     return <MainLayout title="Cargando..." />;
   }
 
   return (
-    <Formik initialValues={product} onSubmit={values => console.log(values)}>
+    <Formik
+      initialValues={product as Product}
+      onSubmit={values => mutation.mutate(values)}>
       {({ handleChange, handleSubmit, values, errors, setFieldValue }) => (
         <MainLayout
           title={values?.title}
@@ -98,12 +117,14 @@ const ProductScreen = ({ route }: Props) => {
                   value={values?.price.toString()}
                   onChangeText={handleChange('price')}
                   style={{ flex: 1 }}
+                  keyboardType="numeric"
                 />
                 <Input
                   label="Inventario"
                   value={values?.stock.toString()}
                   onChangeText={handleChange('stock')}
                   style={{ flex: 1 }}
+                  keyboardType="numeric"
                 />
               </Layout>
 
@@ -154,7 +175,8 @@ const ProductScreen = ({ route }: Props) => {
 
               <Button
                 accessoryLeft={<MyIcon name="save-outline" isWhite />}
-                onPress={() => {}}
+                onPress={() => handleSubmit()}
+                disabled={mutation.isPending}
                 style={{ margin: 15 }}>
                 Guardar
               </Button>
