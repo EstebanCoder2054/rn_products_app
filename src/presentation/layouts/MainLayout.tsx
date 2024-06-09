@@ -14,7 +14,7 @@ interface Props {
   subTitle?: string;
   rightAction?: () => void;
   rightActionIcon?: string;
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 const MainLayout = ({
