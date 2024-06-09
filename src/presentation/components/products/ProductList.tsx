@@ -3,6 +3,7 @@ import { Product } from '../../../domain/entities/product';
 import { Layout, List, Text } from '@ui-kitten/components';
 import ProductCard from './ProductCard';
 import { RefreshControl } from 'react-native';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Props {
   products: Product[];
@@ -11,12 +12,14 @@ interface Props {
 }
 
 const ProductList = ({ products, fetchNextPage }: Props) => {
+  const queryClient = useQueryClient();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const onPullToRefresh = async () => {
     setIsRefreshing(true);
-    // Sleep 1.5 secs
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // Sleep
+    await new Promise(resolve => setTimeout(resolve, 200));
+    queryClient.invalidateQueries({ queryKey: ['products', 'infinite'] });
 
     setIsRefreshing(false);
   };
