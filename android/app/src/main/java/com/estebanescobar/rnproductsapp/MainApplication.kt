@@ -1,4 +1,4 @@
-package com.productsapp
+package com.estebanescobar.rnproductsapp
 
 import android.app.Application
 import com.facebook.react.PackageList

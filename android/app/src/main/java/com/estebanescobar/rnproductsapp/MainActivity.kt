@@ -1,4 +1,4 @@
-package com.productsapp
+package com.estebanescobar.rnproductsapp
 
 import android.os.Bundle;
 
