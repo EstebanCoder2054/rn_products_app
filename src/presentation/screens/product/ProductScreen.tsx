@@ -5,7 +5,6 @@ import {
   ButtonGroup,
   Input,
   Layout,
-  Text,
   useTheme,
 } from '@ui-kitten/components';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -19,6 +18,7 @@ import { Gender, Size, Product } from '../../../domain/entities/product';
 import { MyIcon } from '../../components/ui/MyIcon';
 import { Formik } from 'formik';
 import { updateCreateProduct } from '../../../actions/products/update-create-product';
+import { CameraAdapter } from '../../../config/adapters/camera-adapter';
 
 const sizes: Size[] = [Size.Xs, Size.S, Size.M, Size.L, Size.Xl, Size.Xxl];
 const genders: Gender[] = [Gender.Kid, Gender.Men, Gender.Women, Gender.Unisex];
@@ -62,7 +62,12 @@ const ProductScreen = ({ route }: Props) => {
       {({ handleChange, handleSubmit, values, errors, setFieldValue }) => (
         <MainLayout
           title={values?.title}
-          subTitle={`Precio: ${values?.price}$`}>
+          subTitle={`Precio: ${values?.price}$`}
+          rightAction={async () => {
+            const photos = await CameraAdapter.takePicture();
+            setFieldValue('images', [...values.images, ...photos]);
+          }}
+          rightActionIcon="camera-outline">
           <KeyboardAvoidingView style={{ flex: 1 }}>
             <ScrollView style={{ flex: 1 }}>
               <Layout
